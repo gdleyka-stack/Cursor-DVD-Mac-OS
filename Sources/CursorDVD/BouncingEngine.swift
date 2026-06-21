@@ -4,7 +4,6 @@ import Combine
 
 public class BouncingEngine: ObservableObject {
     @Published public var cursorColor: Color = .red
-    @Published public var cursorStyle: ScreensaverStyle = .hybrid
     
     private var window: OverlayWindow?
     private var timer: Timer?
@@ -30,8 +29,7 @@ public class BouncingEngine: ObservableObject {
     
     public init() {}
     
-    public func start(style: ScreensaverStyle) {
-        self.cursorStyle = style
+    public func start() {
         self.startTime = Date()
         
         // 1. Get the screen where the mouse cursor currently is
@@ -60,7 +58,7 @@ public class BouncingEngine: ObservableObject {
         self.window = overlay
         
         // 4. Generate and set the giant custom cursor on the overlay window
-        let initialCursor = CursorGenerator.createCursor(color: currentNSColor, style: style, size: cursorSize)
+        let initialCursor = CursorGenerator.createCursor(color: currentNSColor, size: cursorSize)
         overlay.cursorView.currentCursor = initialCursor
         
         // 5. Show the window and make it key to receive clicks/keypresses for dismissal
@@ -110,24 +108,11 @@ public class BouncingEngine: ObservableObject {
         let screenW = targetScreen.frame.size.width
         let screenH = targetScreen.frame.size.height
         
-        var minX: CGFloat = 0
-        var maxX: CGFloat = screenW
-        var minY: CGFloat = 0
-        var maxY: CGFloat = screenH
-        
-        // Adjust limits based on cursor hotspot / bounding box
-        switch cursorStyle {
-        case .giantCursor, .hybrid:
-            minX = 2
-            maxX = screenW - 60
-            minY = 2
-            maxY = screenH - 90
-        case .dvdLogo:
-            minX = 60
-            maxX = screenW - 60
-            minY = 60
-            maxY = screenH - 60
-        }
+        // Boundaries for the giant cursor bounds
+        let minX: CGFloat = 2
+        let maxX: CGFloat = screenW - 60
+        let minY: CGFloat = 2
+        let maxY: CGFloat = screenH - 90
         
         var bounced = false
         
@@ -182,7 +167,7 @@ public class BouncingEngine: ObservableObject {
             self.cursorColor = Color(nextColor)
             
             // Rebuild the NSCursor and apply it to change shape color
-            let newCursor = CursorGenerator.createCursor(color: nextColor, style: cursorStyle, size: cursorSize)
+            let newCursor = CursorGenerator.createCursor(color: nextColor, size: cursorSize)
             window?.cursorView.currentCursor = newCursor
         }
     }

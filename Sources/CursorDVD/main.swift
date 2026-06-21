@@ -7,7 +7,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // Configuration
     var idleTimeout: Double = 60.0 // default 1 minute (60 seconds)
-    var selectedStyle: ScreensaverStyle = .hybrid
     
     // State
     var isScreensaverRunning = false
@@ -64,18 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // Style Submenu
-        let styleSubmenu = NSMenu()
-        for style in ScreensaverStyle.allCases {
-            let item = NSMenuItem(title: style.rawValue, action: #selector(changeStyle(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = style
-            item.state = (style == selectedStyle) ? .on : .off
-            styleSubmenu.addItem(item)
-        }
-        let styleMenuItem = NSMenuItem(title: "Style", action: nil, keyEquivalent: "")
-        styleMenuItem.submenu = styleSubmenu
-        menu.addItem(styleMenuItem)
+        // Style submenu removed
         
         // Idle Timeout Submenu
         let timeoutSubmenu = NSMenu()
@@ -144,18 +132,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Make sure the application is activated and overlay takes full screen context
         NSApp.activate(ignoringOtherApps: true)
-        engine.start(style: selectedStyle)
+        engine.start()
     }
     
     @objc func testNow() {
         startScreensaver()
     }
     
-    @objc func changeStyle(_ sender: NSMenuItem) {
-        guard let style = sender.representedObject as? ScreensaverStyle else { return }
-        selectedStyle = style
-        buildMenu() // Rebuild to update tick marks
-    }
     
     @objc func changeTimeout(_ sender: NSMenuItem) {
         guard let seconds = sender.representedObject as? Double else { return }
