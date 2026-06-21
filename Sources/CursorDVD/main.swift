@@ -16,6 +16,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Run as a regular app (shows Dock icon)
         NSApp.setActivationPolicy(.regular)
         
+        // Load custom Dock icon programmatically
+        if let iconPath = Bundle.main.path(forResource: "dvd-logo", ofType: "jpg"),
+           let image = NSImage(contentsOfFile: iconPath) {
+            NSApp.applicationIconImage = image
+        } else if let fallbackImage = NSImage(contentsOfFile: "dvd-logo.jpg") {
+            NSApp.applicationIconImage = fallbackImage
+        }
+        
         setupMenuBar()
         startIdleChecking()
         
