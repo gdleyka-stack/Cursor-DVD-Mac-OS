@@ -14,8 +14,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var checkIdleTimer: Timer?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Run as an accessory app (no Dock icon, menu bar only)
-        NSApp.setActivationPolicy(.accessory)
+        // Run as a regular app (shows Dock icon)
+        NSApp.setActivationPolicy(.regular)
         
         setupMenuBar()
         startIdleChecking()
