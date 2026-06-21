@@ -130,7 +130,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if isScreensaverRunning {
                 statusMenuItem.title = "Status: Screensaver Active"
             } else if let idle = currentIdle {
-                let remaining = max(0, Int(idleTimeout - idle))
                 statusMenuItem.title = "Status: Waiting (Idle: \(Int(idle))s / \(Int(idleTimeout))s)"
             } else {
                 statusMenuItem.title = "Status: Idle Monitor Active"
