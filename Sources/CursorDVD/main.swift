@@ -173,6 +173,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenu() // Rebuild to update tick marks
     }
     
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false
+    }
+    
     @objc func quitApp() {
         engine.stop()
         NSApplication.shared.terminate(nil)

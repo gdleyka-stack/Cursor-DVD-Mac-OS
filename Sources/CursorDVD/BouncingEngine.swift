@@ -83,8 +83,8 @@ public class BouncingEngine: ObservableObject {
         // Remove observer
         NotificationCenter.default.removeObserver(self)
         
-        // Close window
-        window?.close()
+        // Hide window instead of closing
+        window?.orderOut(nil)
         window = nil
         
         // Trigger callback
