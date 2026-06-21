@@ -22,12 +22,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Run as a regular app (shows Dock icon)
         NSApp.setActivationPolicy(.regular)
         
+        let setRoundedIcon: (NSImage) -> Void = { img in
+            let size = img.size
+            let rounded = NSImage(size: size)
+            rounded.lockFocus()
+            let rect = NSRect(origin: .zero, size: size)
+            let clipPath = NSBezierPath(roundedRect: rect, xRadius: size.width * 0.22, yRadius: size.height * 0.22)
+            clipPath.addClip()
+            img.draw(in: rect)
+            rounded.unlockFocus()
+            NSApp.applicationIconImage = rounded
+        }
+        
         // Load custom Dock icon programmatically
         if let iconPath = Bundle.main.path(forResource: "dvd-logo", ofType: "jpg"),
            let image = NSImage(contentsOfFile: iconPath) {
-            NSApp.applicationIconImage = image
+            setRoundedIcon(image)
         } else if let fallbackImage = NSImage(contentsOfFile: "dvd-logo.jpg") {
-            NSApp.applicationIconImage = fallbackImage
+            setRoundedIcon(fallbackImage)
         }
         
         setupMenuBar()
