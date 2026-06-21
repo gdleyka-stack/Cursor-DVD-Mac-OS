@@ -13,6 +13,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var checkIdleTimer: Timer?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Load persistent settings
+        let savedTimeout = UserDefaults.standard.double(forKey: "idleTimeout")
+        if savedTimeout > 0 {
+            self.idleTimeout = savedTimeout
+        }
+        
         // Run as a regular app (shows Dock icon)
         NSApp.setActivationPolicy(.regular)
         
@@ -151,6 +157,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func changeTimeout(_ sender: NSMenuItem) {
         guard let seconds = sender.representedObject as? Double else { return }
         idleTimeout = seconds
+        UserDefaults.standard.set(seconds, forKey: "idleTimeout")
         buildMenu() // Rebuild to update tick marks
     }
     
