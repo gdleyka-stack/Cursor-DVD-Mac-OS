@@ -13,8 +13,9 @@ public class BouncingEngine: ObservableObject {
     private var localPosition: CGPoint = .zero
     private var velocity: CGVector = CGVector(dx: 5.0, dy: 5.0)
     private let cursorSize = NSSize(width: 120, height: 120)
-    
-
+    // Track launch time to prevent immediate dismiss
+    private var startTime: Date = Date()
+    private var checkActivityTimer: Timer?
     
     // Callback to notify main application that we stopped
     public var onStop: (() -> Void)?
@@ -28,6 +29,7 @@ public class BouncingEngine: ObservableObject {
     public init() {}
     
     public func start() {
+        self.startTime = Date()
         
         // 1. Get the screen where the mouse cursor currently is
         let mouseLocation = NSEvent.mouseLocation
@@ -69,6 +71,11 @@ public class BouncingEngine: ObservableObject {
         self.timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
             self?.updatePosition()
         }
+        
+        // 8. Start background activity polling (every 100ms)
+        self.checkActivityTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            self?.checkSystemActivity()
+        }
     }
     
     @objc private func handleActivity() {
@@ -86,6 +93,9 @@ public class BouncingEngine: ObservableObject {
         // Hide window instead of closing
         window?.orderOut(nil)
         window = nil
+        
+        checkActivityTimer?.invalidate()
+        checkActivityTimer = nil
         
         // Trigger callback
         onStop?()
@@ -162,4 +172,16 @@ public class BouncingEngine: ObservableObject {
         }
     }
     
+    private func checkSystemActivity() {
+        // Prevent immediate dismissal during the first 0.5s of startup
+        guard Date().timeIntervalSince(startTime) > 0.5 else { return }
+        
+        // Read hardware activity idle time
+        let idleTime = IdleMonitor.getSystemIdleTime()
+        
+        // If system detects physical keyboard/mouse input, idleTime drops to 0
+        if idleTime < 0.3 {
+            self.stop()
+        }
+    }
 }
