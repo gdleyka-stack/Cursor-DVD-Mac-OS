@@ -1,8 +1,0 @@
-.DS_Store
-/.build
-/Packages
-.swiftpm
-.swift-version
-/Cursor-DVD-Mac-OS
-/CursorDVD.app/Contents/MacOS/CursorDVD
-
